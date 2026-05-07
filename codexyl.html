@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Codexyl — Words That Work</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=Cormorant+Garamond:ital,wght@1,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --black:#080808;--deep:#0e0e0e;--card:#111111;--border:#1e1e1e;
+  --gold:#c9a84c;--gold-light:#e8c97a;--gold-dim:#8a6f2e;
+  --white:#f4f0e8;--muted:#7a7060;
+  --ff-display:'Playfair Display',serif;
+  --ff-body:'DM Sans',sans-serif;
+  --ff-italic:'Cormorant Garamond',serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--ff-body);overflow-x:hidden;cursor:none;}
+.cursor{width:10px;height:10px;background:var(--gold);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s;}
+.cursor-ring{width:36px;height:36px;border:1px solid var(--gold-dim);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:all .15s ease;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:.035;pointer-events:none;z-index:1000;}
+nav{display:flex;justify-content:space-between;align-items:center;padding:28px 60px;position:fixed;top:0;left:0;right:0;z-index:200;border-bottom:1px solid transparent;transition:border-color .4s,background .4s;}
+nav.scrolled{background:rgba(8,8,8,.93);border-bottom-color:var(--border);backdrop-filter:blur(12px);}
+.nav-logo{font-family:var(--ff-display);font-size:1.4rem;font-weight:900;letter-spacing:.08em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dim));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-links{display:flex;gap:40px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;transition:color .3s;cursor:none;}
+.nav-links a:hover{color:var(--gold);}
+.nav-cta{border:1px solid var(--gold-dim);color:var(--gold)!important;padding:8px 22px;border-radius:2px;transition:background .3s!important;}
+.nav-cta:hover{background:var(--gold)!important;color:var(--black)!important;-webkit-text-fill-color:var(--black)!important;}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:140px 60px 80px;position:relative;overflow:hidden;}
+.hero-bg-line{position:absolute;right:0;top:0;bottom:0;width:45%;border-left:1px solid var(--border);background:linear-gradient(180deg,transparent,rgba(201,168,76,.03) 50%,transparent);}
+.hero-orb{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.08),transparent 70%);right:10%;top:20%;animation:pulse 6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);opacity:.7;}}
+.hero-tag{font-family:var(--ff-italic);font-size:1.1rem;color:var(--gold);margin-bottom:28px;opacity:0;animation:fadeUp .8s ease forwards .2s;}
+.hero-title{font-family:var(--ff-display);font-size:clamp(3.2rem,7vw,6.5rem);font-weight:900;line-height:1.0;margin-bottom:30px;opacity:0;animation:fadeUp .9s ease forwards .4s;}
+.hero-title .gold-text{display:block;background:linear-gradient(90deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{max-width:480px;font-size:1rem;color:var(--muted);line-height:1.8;margin-bottom:48px;font-weight:300;opacity:0;animation:fadeUp 1s ease forwards .6s;}
+.hero-actions{display:flex;gap:20px;align-items:center;flex-wrap:wrap;opacity:0;animation:fadeUp 1s ease forwards .8s;}
+.btn-primary{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--black);font-weight:700;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 36px;border:none;border-radius:2px;cursor:none;text-decoration:none;transition:opacity .3s,transform .3s;display:inline-block;font-family:var(--ff-body);}
+.btn-primary:hover{opacity:.85;transform:translateY(-2px);}
+.btn-ghost{color:var(--muted);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:color .3s;display:flex;align-items:center;gap:8px;cursor:none;background:none;border:none;font-family:var(--ff-body);}
+.btn-ghost:hover{color:var(--white);}
+.btn-ghost::after{content:'→';transition:transform .3s;}
+.btn-ghost:hover::after{transform:translateX(4px);}
+.hero-stats{display:flex;gap:60px;margin-top:80px;padding-top:40px;border-top:1px solid var(--border);opacity:0;animation:fadeUp 1s ease forwards 1.1s;flex-wrap:wrap;}
+.stat-num{font-family:var(--ff-display);font-size:2rem;font-weight:700;color:var(--gold);}
+.stat-label{font-size:.72rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:4px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+.marquee-wrap{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0;overflow:hidden;background:var(--deep);}
+.marquee-track{display:flex;gap:60px;white-space:nowrap;animation:marquee 22s linear infinite;}
+.marquee-track span{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-dim);}
+.marquee-track span.dot{color:var(--gold);font-size:1.2rem;line-height:1;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+section{padding:100px 60px;}
+.section-label{font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.section-title{font-family:var(--ff-display);font-size:clamp(2rem,4vw,3.2rem);font-weight:700;line-height:1.15;margin-bottom:60px;max-width:560px;}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.service-card{background:var(--card);padding:48px 36px;position:relative;overflow:hidden;transition:background .4s;}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s;}
+.service-card:hover{background:#141414;}
+.service-card:hover::before{transform:scaleX(1);}
+.service-num{font-family:var(--ff-display);font-size:3.5rem;font-weight:900;color:var(--border);position:absolute;top:20px;right:24px;line-height:1;transition:color .4s;}
+.service-card:hover .service-num{color:rgba(201,168,76,.08);}
+.service-icon{width:44px;height:44px;border:1px solid var(--gold-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:28px;font-size:1.2rem;}
+.service-card h3{font-family:var(--ff-display);font-size:1.25rem;font-weight:700;margin-bottom:14px;}
+.service-card p{font-size:.88rem;color:var(--muted);line-height:1.75;font-weight:300;}
+.service-tag{display:inline-block;margin-top:20px;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold-dim);padding-bottom:2px;}
+.service-hire-btn{display:block;width:100%;margin-top:18px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;cursor:none;transition:border-color .3s,color .3s;font-family:var(--ff-body);text-align:left;}
+.service-hire-btn:hover{border-color:var(--gold-dim);color:var(--gold);}
+.process{background:var(--deep);}
+.process-steps{display:flex;flex-direction:column;max-width:780px;}
+.process-step{display:grid;grid-template-columns:80px 1fr;gap:32px;padding:40px 0;border-bottom:1px solid var(--border);align-items:start;}
+.step-num{font-family:var(--ff-display);font-size:3rem;font-weight:900;color:var(--border);line-height:1;transition:color .4s;}
+.process-step:hover .step-num{color:var(--gold-dim);}
+.step-content h4{font-family:var(--ff-display);font-size:1.2rem;margin-bottom:10px;margin-top:8px;}
+.step-content p{font-size:.88rem;color:var(--muted);line-height:1.75;font-weight:300;}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.why-text p{font-size:.92rem;color:var(--muted);line-height:1.9;font-weight:300;margin-bottom:18px;}
+.why-points{display:flex;flex-direction:column;gap:20px;margin-top:40px;}
+.why-point{display:flex;align-items:center;gap:16px;font-size:.88rem;}
+.why-point::before{content:'◆';color:var(--gold);font-size:.5rem;flex-shrink:0;}
+.why-visual{position:relative;height:460px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.why-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,168,76,.06),transparent 70%);}
+.why-visual-text{font-family:var(--ff-display);font-size:5rem;font-weight:900;color:var(--border);text-align:center;line-height:1;z-index:1;}
+.why-visual-text em{display:block;font-family:var(--ff-italic);font-style:italic;font-size:1.3rem;color:var(--gold);font-weight:300;margin-top:16px;letter-spacing:.1em;}
+.corner{position:absolute;width:60px;height:60px;border-color:var(--gold-dim);border-style:solid;border-width:0;}
+.corner.tl{top:16px;left:16px;border-top-width:1px;border-left-width:1px;}
+.corner.tr{top:16px;right:16px;border-top-width:1px;border-right-width:1px;}
+.corner.bl{bottom:16px;left:16px;border-bottom-width:1px;border-left-width:1px;}
+.corner.br{bottom:16px;right:16px;border-bottom-width:1px;border-right-width:1px;}
+.contact-section{background:var(--deep);border-top:1px solid var(--border);}
+.channels{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:80px;}
+.ch-card{background:var(--card);padding:44px 32px;text-align:center;transition:background .3s;position:relative;overflow:hidden;}
+.ch-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);transform:scaleX(0);transition:transform .4s;}
+.ch-card:hover{background:#131313;}
+.ch-card:hover::after{transform:scaleX(1);}
+.ch-icon{font-size:2.2rem;margin-bottom:20px;display:block;}
+.ch-card h4{font-family:var(--ff-display);font-size:1.15rem;margin-bottom:12px;}
+.ch-card p{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:28px;}
+.ch-btn{display:inline-block;padding:13px 30px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border-radius:2px;cursor:none;transition:opacity .3s,transform .3s;font-family:var(--ff-body);font-weight:600;border:none;}
+.ch-btn:hover{opacity:.85;transform:translateY(-1px);}
+.ch-btn.gold{background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--black);}
+.ch-btn.wa{background:#25D366;color:#fff;}
+.ch-btn.outline{border:1px solid var(--gold-dim);color:var(--gold);background:transparent;}
+.ch-btn.outline:hover{background:var(--gold);color:var(--black);}
+.cta-wrap{text-align:center;padding:60px 0 0;}
+.cta-big{font-family:var(--ff-display);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.1;margin-bottom:16px;}
+.cta-big span{background:linear-gradient(90deg,var(--gold-light),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cta-sub{font-size:.92rem;color:var(--muted);margin-bottom:36px;font-weight:300;}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.wa-float{position:fixed;bottom:28px;right:28px;z-index:300;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,.3);animation:waPulse 3s ease-in-out infinite;cursor:none;}
+.wa-float:hover{transform:scale(1.1);}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.3);}50%{box-shadow:0 4px 36px rgba(37,211,102,.5);}}
+footer{padding:40px 60px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);}
+footer p{font-size:.75rem;color:var(--muted);}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;backdrop-filter:blur(10px);padding:20px;}
+.overlay.open{opacity:1;visibility:visible;}
+.modal{background:var(--deep);border:1px solid var(--border);width:100%;max-width:580px;max-height:92vh;overflow-y:auto;position:relative;transform:translateY(30px) scale(.97);transition:transform .35s ease;border-radius:2px;}
+.overlay.open .modal{transform:none;}
+.modal-head{padding:36px 40px 24px;border-bottom:1px solid var(--border);position:relative;}
+.modal-head h3{font-family:var(--ff-display);font-size:1.65rem;font-weight:700;margin-bottom:6px;}
+.modal-head p{font-size:.82rem;color:var(--muted);}
+.modal-x{position:absolute;top:28px;right:32px;background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:none;transition:color .3s;line-height:1;}
+.modal-x:hover{color:var(--gold);}
+.modal-body{padding:32px 40px 40px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:.88rem;padding:13px 16px;border-radius:2px;outline:none;transition:border-color .3s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold-dim);}
+.fg textarea{resize:vertical;min-height:90px;line-height:1.6;}
+.fg select option{background:var(--deep);}
+.fsub{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--black);font-family:var(--ff-body);font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:none;border-radius:2px;cursor:none;transition:opacity .3s,transform .3s;margin-top:8px;}
+.fsub:hover{opacity:.85;transform:translateY(-1px);}
+.fdiv{text-align:center;margin:24px 0;position:relative;}
+.fdiv::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:var(--border);}
+.fdiv span{background:var(--deep);padding:0 16px;font-size:.7rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;position:relative;}
+.fquick{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fq-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;border-radius:2px;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-decoration:none;cursor:none;transition:opacity .3s;font-family:var(--ff-body);border:none;}
+.fq-btn.wa{background:#25D366;color:#fff;}
+.fq-btn.up{background:var(--card);border:1px solid var(--border);color:var(--gold);}
+.fq-btn:hover{opacity:.85;}
+.success{display:none;text-align:center;padding:40px 0;}
+.success .check{font-size:3.5rem;color:var(--gold);margin-bottom:16px;}
+.success h4{font-family:var(--ff-display);font-size:1.5rem;margin-bottom:10px;color:var(--gold);}
+.success p{font-size:.88rem;color:var(--muted);line-height:1.7;}
+
+@media(max-width:900px){
+  nav{padding:22px 24px;}
+  .nav-links{display:none;}
+  section,.hero{padding:80px 24px;}
+  .services-grid,.channels{grid-template-columns:1fr;}
+  .why-grid{grid-template-columns:1fr;gap:40px;}
+  .why-visual{height:240px;}
+  footer{flex-direction:column;gap:12px;text-align:center;padding:32px 24px;}
+  .hero-stats{gap:28px;}
+  .frow,.fquick{grid-template-columns:1fr;}
+  .modal-body,.modal-head{padding-left:22px;padding-right:22px;}
+  .cta-btns{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<a class="wa-float" href="https://wa.me/2348065838887?text=Hi%20Codexyl%2C%20I%27d%20like%20to%20hire%20you%20for%20a%20writing%20project." target="_blank">💬</a>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">Codexyl</div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#" class="nav-cta" onclick="openModal(event)">Hire Me</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-line"></div>
+  <div class="hero-orb"></div>
+  <p class="hero-tag">— Words crafted in the dark. Published in the light.</p>
+  <h1 class="hero-title">Your Voice.<br/><span class="gold-text">My Pen.</span></h1>
+  <p class="hero-sub">Codexyl delivers AI & tech content, ghostwritten articles, and social copy that sounds exactly like you — only sharper.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary" onclick="openModal(event)">Start a Project</a>
+    <button class="btn-ghost" onclick="scrollTo('services')">See Services</button>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">100%</div><div class="stat-label">Ghost Credited</div></div>
+    <div><div class="stat-num">48h</div><div class="stat-label">Avg Turnaround</div></div>
+    <div><div class="stat-num">AI+</div><div class="stat-label">Tech Specialised</div></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>AI Blog Writing</span><span class="dot">◆</span><span>Ghost Articles</span><span class="dot">◆</span><span>Social Captions</span><span class="dot">◆</span><span>Tech Content</span><span class="dot">◆</span><span>Brand Voice</span><span class="dot">◆</span><span>Anonymous Authorship</span><span class="dot">◆</span><span>Business Writing</span><span class="dot">◆</span><span>AI Blog Writing</span><span class="dot">◆</span><span>Ghost Articles</span><span class="dot">◆</span><span>Social Captions</span><span class="dot">◆</span><span>Tech Content</span><span class="dot">◆</span><span>Brand Voice</span><span class="dot">◆</span><span>Anonymous Authorship</span><span class="dot">◆</span><span>Business Writing</span><span class="dot">◆</span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <p class="section-label">What We Offer</p>
+  <h2 class="section-title">Three Services. One Standard. Excellence.</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-num">01</span>
+      <div class="service-icon">✦</div>
+      <h3>AI & Tech Blog Posts</h3>
+      <p>Deep-dive articles on artificial intelligence, emerging tech, software tools, and the digital future — written to rank, built to convert.</p>
+      <span class="service-tag">From $15/article</span>
+      <button class="service-hire-btn" onclick="openModal(event,'AI & Tech Blog Posts')">Request This Service →</button>
+    </div>
+    <div class="service-card">
+      <span class="service-num">02</span>
+      <div class="service-icon">◈</div>
+      <h3>Ghostwritten Articles</h3>
+      <p>Long-form business content, thought leadership, and branded articles published under your name. Your audience never knows I wrote it.</p>
+      <span class="service-tag">From $20/article</span>
+      <button class="service-hire-btn" onclick="openModal(event,'Ghostwritten Articles')">Request This Service →</button>
+    </div>
+    <div class="service-card">
+      <span class="service-num">03</span>
+      <div class="service-icon">❋</div>
+      <h3>Social Media Captions</h3>
+      <p>Scroll-stopping captions for Instagram, LinkedIn, X, and TikTok — voice-matched, hook-crafted, and engagement-optimised.</p>
+      <span class="service-tag">From $5/caption pack</span>
+      <button class="service-hire-btn" onclick="openModal(event,'Social Media Captions')">Request This Service →</button>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <p class="section-label">How It Works</p>
+  <h2 class="section-title">Simple. Fast. Confidential.</h2>
+  <div class="process-steps">
+    <div class="process-step"><div class="step-num">01</div><div class="step-content"><h4>Brief Me</h4><p>Send your topic, target audience, tone, and any reference material. The more context, the sharper the output.</p></div></div>
+    <div class="process-step"><div class="step-num">02</div><div class="step-content"><h4>I Research & Write</h4><p>I dive deep, find the angles, and craft content that sounds like your best self — polished and ready to publish.</p></div></div>
+    <div class="process-step"><div class="step-num">03</div><div class="step-content"><h4>Review & Revise</h4><p>You review the draft. One free revision round included. We refine until it's exactly right.</p></div></div>
+    <div class="process-step"><div class="step-num">04</div><div class="step-content"><h4>Deliver & Disappear</h4><p>Final content delivered. I stay silent — the work is yours, the credit is yours. No trails, no claims.</p></div></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="why-grid">
+    <div class="why-text">
+      <p class="section-label">Why Codexyl</p>
+      <h2 class="section-title">Not Just a Writer. A Strategic Voice.</h2>
+      <p>Most ghostwriters write words. Codexyl crafts strategy — combining research depth, AI literacy, and editorial instinct into content that actually works for your brand.</p>
+      <p>Every piece is delivered with confidentiality, precision, and zero fluff.</p>
+      <div class="why-points">
+        <div class="why-point">AI & tech-native writing perspective</div>
+        <div class="why-point">100% confidential — your name, your credit</div>
+        <div class="why-point">Fast turnaround, clear communication</div>
+        <div class="why-point">Revision-friendly, client-first process</div>
+        <div class="why-point">Verified via Upwork & GitHub portfolio</div>
+      </div>
+    </div>
+    <div class="why-visual">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="why-visual-text">CDX<br/>YL<em>Words that work.</em></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <p class="section-label">Get In Touch</p>
+  <h2 class="section-title">Three Ways to Reach Me.</h2>
+  <div class="channels">
+    <div class="ch-card">
+      <span class="ch-icon">📋</span>
+      <h4>Project Brief Form</h4>
+      <p>Fill in your project details and I'll get back to you within 24 hours with a quote and timeline.</p>
+      <button class="ch-btn gold" onclick="openModal(event)">Fill Brief Form</button>
+    </div>
+    <div class="ch-card">
+      <span class="ch-icon">💬</span>
+      <h4>WhatsApp Chat</h4>
+      <p>Prefer to talk directly? Message me on WhatsApp and let's discuss your project in real time.</p>
+      <a class="ch-btn wa" href="https://wa.me/2348065838887?text=Hi%20Codexyl%2C%20I%27d%20like%20to%20discuss%20a%20writing%20project." target="_blank">Chat on WhatsApp</a>
+    </div>
+    <div class="ch-card">
+      <span class="ch-icon">🔗</span>
+      <h4>Hire on Upwork</h4>
+      <p>Find my verified profile on Upwork for secure contracts, payment protection, and full review history.</p>
+      <a class="ch-btn outline" href="https://www.upwork.com/freelancers/~01e8a44e26a73f295d" target="_blank">View Upwork Profile</a>
+    </div>
+  </div>
+  <div class="cta-wrap">
+    <h2 class="cta-big">Let's Build Your<br/><span>Voice Together.</span></h2>
+    <p class="cta-sub">Pick whichever channel feels right. I respond fast.</p>
+    <div class="cta-btns">
+      <button class="btn-primary" onclick="openModal(event)">Start a Project Brief</button>
+      <a class="ch-btn wa" style="padding:16px 32px;border-radius:2px;" href="https://wa.me/2348065838887?text=Hi%20Codexyl%2C%20I%27m%20interested%20in%20your%20services." target="_blank">💬 WhatsApp Me</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="nav-logo">Codexyl</div>
+  <p>© 2026 Codexyl. All rights reserved.</p>
+  <p style="color:var(--gold-dim);font-size:.7rem;letter-spacing:.1em;">GHOSTWRITING · AI CONTENT · SOCIAL COPY</p>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="outsideClose(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <h3>Start a Project</h3>
+      <p>Fill in the details — I'll reply within 24 hours with a quote.</p>
+      <button class="modal-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="success" id="successBox">
+        <div class="check">✦</div>
+        <h4>Brief Sent!</h4>
+        <p>Your email client will open to send the brief.<br/>I'll review and reply within 24 hours.</p>
+      </div>
+      <div id="formBox">
+        <div class="frow">
+          <div class="fg"><label>Your Name</label><input type="text" id="cName" placeholder="John Doe"/></div>
+          <div class="fg"><label>Your Email</label><input type="email" id="cEmail" placeholder="you@email.com"/></div>
+        </div>
+        <div class="fg">
+          <label>Service Needed</label>
+          <select id="cService">
+            <option value="">— Select a service —</option>
+            <option>AI &amp; Tech Blog Posts</option>
+            <option>Ghostwritten Articles</option>
+            <option>Social Media Captions</option>
+            <option>Other / Not Sure Yet</option>
+          </select>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <label>Word Count / Volume</label>
+            <select id="cWords">
+              <option value="">— Select —</option>
+              <option>Short (under 500 words)</option>
+              <option>Medium (500–1,500 words)</option>
+              <option>Long (1,500–3,000 words)</option>
+              <option>Bulk / Ongoing</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Your Budget (USD)</label>
+            <select id="cBudget">
+              <option value="">— Select —</option>
+              <option>Under $20</option>
+              <option>$20 – $50</option>
+              <option>$50 – $100</option>
+              <option>$100+</option>
+              <option>Let's discuss</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label>Project Details</label><textarea id="cDetails" placeholder="Topic, audience, tone, deadline, or anything else I should know..."></textarea></div>
+        <button class="fsub" onclick="submitForm()">Send My Brief →</button>
+        <div class="fdiv"><span>or reach me directly</span></div>
+        <div class="fquick">
+          <a class="fq-btn wa" href="https://wa.me/2348065838887?text=Hi%20Codexyl%2C%20I%27d%20like%20to%20hire%20you." target="_blank">💬 WhatsApp</a>
+          <a class="fq-btn up" href="https://www.upwork.com/freelancers/~01e8a44e26a73f295d" target="_blank">🔗 Upwork Profile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Cursor
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function a(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(a);})();
+
+// Nav scroll
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>60));
+
+// Smooth scroll helper
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';}}),{threshold:.08});
+document.querySelectorAll('.service-card,.process-step,.why-point,.ch-card').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(22px)';el.style.transition='opacity .6s ease,transform .6s ease';obs.observe(el);});
+
+// Modal
+function openModal(e,svc=''){
+  e&&e.preventDefault();
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('successBox').style.display='none';
+  document.getElementById('formBox').style.display='block';
+  if(svc){
+    const sel=document.getElementById('cService');
+    [...sel.options].forEach(o=>{if(o.text===svc)sel.value=o.value||o.text;});
+  }
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function outsideClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// Submit
+function submitForm(){
+  const name=document.getElementById('cName').value.trim();
+  const email=document.getElementById('cEmail').value.trim();
+  const svc=document.getElementById('cService').value;
+  if(!name||!email||!svc){alert('Please fill in your name, email, and the service you need.');return;}
+  const sub=encodeURIComponent('Codexyl Project Brief — '+svc);
+  const body=encodeURIComponent(
+    'Name: '+name+'\nEmail: '+email+'\nService: '+svc+
+    '\nWord Count: '+(document.getElementById('cWords').value||'Not specified')+
+    '\nBudget: '+(document.getElementById('cBudget').value||'Not specified')+
+    '\n\nProject Details:\n'+(document.getElementById('cDetails').value||'Not provided')
+  );
+  window.location.href='mailto:dimejiojoye32@gmail.com?subject='+sub+'&body='+body;
+  document.getElementById('formBox').style.display='none';
+  document.getElementById('successBox').style.display='block';
+  setTimeout(closeModal,4500);
+}
+</script>
+</body>
+</html>
